@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".folder.Activity_Add_Edit_Folder"
+    android:orientation="vertical">
+
+    <Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_toolbar"
+        >
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hủy"
+            android:textSize="17dp"
+            android:textColor="#007AFF"
+            android:layout_gravity="start"
+            android:layout_marginStart="10dp"
+            />
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thêm thư mục"
+            android:textSize="17dp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
+            />
+        <TextView
+            android:id="@+id/tv_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lưu"
+            android:textSize="17dp"
+            android:textColor="#007AFF"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            />
+    </Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="15dp"
+        >
+        <EditText
+            android:id="@+id/edt_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập tên thư mục"
+            android:background="@drawable/bg_edittext"
+            android:padding="10dp"
+            android:textSize="17dp"
+            android:layout_marginBottom="15dp"
+            />
+        <EditText
+            android:id="@+id/edt_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập mô tả thư mục"
+            android:background="@drawable/bg_edittext"
+            android:paddingTop="20dp"
+            android:paddingBottom="90dp"
+            android:paddingStart="10dp"
+            />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

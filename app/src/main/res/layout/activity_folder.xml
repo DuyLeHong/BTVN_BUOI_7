@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".folder.Activity_Folder"
+    android:orientation="vertical">
+    <Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_toolbar"
+        >
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="Quản lý thư mục"
+               android:textSize="17dp"
+               android:textColor="@color/black"
+               android:layout_gravity="center"
+               />
+           <TextView
+               android:id="@+id/tv_add_item_toolbar"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="Thêm"
+               android:textSize="17dp"
+               android:textColor="#007AFF"
+               android:layout_gravity="end"
+               android:layout_marginEnd="10dp"
+               />
+
+    </Toolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_folder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
+</LinearLayout>

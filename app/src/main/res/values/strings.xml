@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BTVN_BUOI_7</string>
+    <string name="name_folder_exists">Tên thư mục đã tồn tại</string>
+    <string name="name_folder_not_empty">Tên thư mục không được để trống</string>
+    <string name="discription_folder_exists">Mô tả thư mục không được để trống</string>
+    <string name="name_discription_not_change">Bạn chưa thay đổi tên và mô tả thư mục</string>
+
+    <string name="edit_folder_successfully">Sửa thư mục thành công</string>
+    <string name="add_folder_successfully">Thêm thư mục thành công</string>
+
+    <string name="edit_folder">Chỉnh sửa thư mục</string>
+    <string name="add_folder">Thêm thư mục</string>
+    <string name="manager_folder">Quản lý thư mục</string>
+
+</resources>

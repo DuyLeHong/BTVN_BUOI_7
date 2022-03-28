@@ -1,174 +1,137 @@
-package com.example.btvn_buoi_7.folder;
+package com.example.btvn_buoi_7.folder
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import com.example.btvn_buoi_7.folder.FolderModel
+import android.widget.TextView
+import com.example.btvn_buoi_7.folder.FolderAdapter
+import com.example.btvn_buoi_7.database.DatabaseFolder
+import android.os.Bundle
+import com.example.btvn_buoi_7.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import android.content.Intent
+import com.example.btvn_buoi_7.folder.Activity_Folder
+import android.app.Activity
+import android.app.AlertDialog
+import android.widget.Toast
+import com.example.btvn_buoi_7.folder.Activity_Add_Edit_Folder
+import android.content.DialogInterface
+import android.view.View
+import android.widget.Toolbar
+import androidx.appcompat.widget.PopupMenu
+import java.io.Serializable
+import java.util.ArrayList
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+class Activity_Folder : AppCompatActivity() {
+    var rcv_folder: RecyclerView? = null
+    var folderList: MutableList<FolderModel> = ArrayList()
+    var toolbar: Toolbar? = null
+    var tv_add_item_toolbar: TextView? = null
+    var adapter: FolderAdapter? = null
+    var databaseFolder: DatabaseFolder? = null
 
-import com.example.btvn_buoi_7.R;
-import com.example.btvn_buoi_7.database.DatabaseFolder;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-public class Activity_Folder extends AppCompatActivity {
-    public static final int REQUEST_CODE_ADD_ITEM = 123;
-    public static final int REQUEST_CODE_EDIT_ITEM = 1234;
-
-    public static final String ACTION_ADD = "add";
-    public static final String ACTION_EDIT = "edit";
-
-    public static final String ITEM_FOLDER = "item_folder";
-    public static final String LIST_FOLDER = "list_folder";
-
-    public static final String NAME_FOLDER = "name";
-    public static final String DESCRIPTION_FOLDER = "description";
-
-    RecyclerView rcv_folder;
-    public List<FolderModel> folderList = new ArrayList<>();
-    Toolbar toolbar;
-    TextView tv_add_item_toolbar;
-    FolderAdapter adapter;
-    DatabaseFolder databaseFolder;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_folder);
-
-        initUI();
-
-        databaseFolder = new DatabaseFolder(this);
-
-        adapter = new FolderAdapter(this);
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rcv_folder.setLayoutManager(linearLayoutManager);
-
-        rcv_folder.setAdapter(adapter);
-
-        setToolbar();
-
-        loadData();
-
-        adapter.setData(folderList);
-
-        tv_add_item_toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toActivityAddItem();
-            }
-        });
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_folder)
+        initUI()
+        databaseFolder = DatabaseFolder(this)
+        adapter = FolderAdapter(this)
+        val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        rcv_folder!!.layoutManager = linearLayoutManager
+        rcv_folder!!.adapter = adapter
+        setToolbar()
+        loadData()
+        adapter!!.setData(folderList)
+        tv_add_item_toolbar!!.setOnClickListener { toActivityAddItem() }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_ADD_ITEM && resultCode == RESULT_OK) {
-            String name = data.getExtras().getString(NAME_FOLDER);
-            String description = data.getExtras().getString(DESCRIPTION_FOLDER);
-            FolderModel folder = new FolderModel(name, description);
-            databaseFolder.insertFolder(folder);
-            loadData();
-            Toast.makeText(this,getString(R.string.add_folder_successfully) , Toast.LENGTH_SHORT).show();
-
+            val name = data!!.extras!!.getString(NAME_FOLDER)
+            val description = data.extras!!.getString(DESCRIPTION_FOLDER)
+            val folder = FolderModel(name!!, description!!)
+            databaseFolder!!.insertFolder(folder)
+            loadData()
+            Toast.makeText(this, getString(R.string.add_folder_successfully), Toast.LENGTH_SHORT)
+                .show()
         } else if (requestCode == REQUEST_CODE_EDIT_ITEM && resultCode == RESULT_OK) {
-            Bundle bundle = data.getExtras();
-            FolderModel folder = (FolderModel) bundle.getSerializable(ITEM_FOLDER);
-            databaseFolder.updateFolder(folder);
-            loadData();
-            Toast.makeText(this, getString(R.string.edit_folder_successfully), Toast.LENGTH_SHORT).show();
+            val bundle = data!!.extras
+            val folder = bundle!!.getSerializable(ITEM_FOLDER) as FolderModel?
+            databaseFolder!!.updateFolder(folder!!)
+            loadData()
+            Toast.makeText(this, getString(R.string.edit_folder_successfully), Toast.LENGTH_SHORT)
+                .show()
         }
-
-
     }
 
-    private void initUI() {
-        rcv_folder = findViewById(R.id.rcv_folder);
-        toolbar = findViewById(R.id.toolbar);
-        tv_add_item_toolbar = findViewById(R.id.tv_add_item_toolbar);
+    private fun initUI() {
+        rcv_folder = findViewById(R.id.rcv_folder)
+        toolbar = findViewById(R.id.toolbar)
+        tv_add_item_toolbar = findViewById(R.id.tv_add_item_toolbar)
     }
 
-    private void toActivityAddItem() {
-        Intent intent = new Intent(Activity_Folder.this, Activity_Add_Edit_Folder.class);
-        intent.putExtra( LIST_FOLDER, (Serializable) folderList);
-        intent.setAction(ACTION_ADD);
-        startActivityForResult(intent, REQUEST_CODE_ADD_ITEM);
+    private fun toActivityAddItem() {
+        val intent = Intent(this@Activity_Folder, Activity_Add_Edit_Folder::class.java)
+        intent.putExtra(LIST_FOLDER, folderList as Serializable)
+        intent.action = ACTION_ADD
+        startActivityForResult(intent, REQUEST_CODE_ADD_ITEM)
     }
 
-    private void loadData() {
-        folderList.clear();
-        folderList.addAll(databaseFolder.getAllFolder());
-
-        adapter.notifyDataSetChanged();
+    private fun loadData() {
+        folderList.clear()
+        folderList.addAll(databaseFolder!!.allFolder)
+        adapter!!.notifyDataSetChanged()
     }
 
-    private void setToolbar() {
-        toolbar.setNavigationIcon(R.drawable.ic_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
-        getWindow().setStatusBarColor(getColor(R.color.white));
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+    private fun setToolbar() {
+        toolbar!!.setNavigationIcon(R.drawable.ic_back)
+        toolbar!!.setNavigationOnClickListener { onBackPressed() }
+        window.statusBarColor = getColor(R.color.white)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     }
 
-     void showPopupMenu(View view, FolderModel folder){
-        PopupMenu popup = new PopupMenu(this,view);
-        popup.inflate(R.menu.menu_option);
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.menu_delete:
-                        showActionDialogDeleteItem(folder);
-                        return true ;
-                    case R.id.menu_edit:
-                        Intent intent = new Intent(Activity_Folder.this, Activity_Add_Edit_Folder.class);
-                        intent.putExtra( LIST_FOLDER, (Serializable) folderList);
-                        intent.putExtra(ITEM_FOLDER,folder);
-                        intent.setAction(ACTION_EDIT);
-                        startActivityForResult(intent, REQUEST_CODE_EDIT_ITEM);
+    fun showPopupMenu(view: View?, folder: FolderModel) {
+        val popup = PopupMenu(this, view!!)
+        popup.inflate(R.menu.menu_option)
+        popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.menu_delete -> {
+                    showActionDialogDeleteItem(folder)
+                    return@OnMenuItemClickListener true
                 }
-                return false;
+                R.id.menu_edit -> {
+                    val intent = Intent(this@Activity_Folder, Activity_Add_Edit_Folder::class.java)
+                    intent.putExtra(LIST_FOLDER, folderList as Serializable)
+                    intent.putExtra(ITEM_FOLDER, folder)
+                    intent.action = ACTION_EDIT
+                    startActivityForResult(intent, REQUEST_CODE_EDIT_ITEM)
+                }
             }
-        });
-        popup.show();
+            false
+        })
+        popup.show()
     }
 
-    private void showActionDialogDeleteItem(FolderModel folder){
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("Bạn có muốn xóa folder này");
-        dialog.setNegativeButton("Có", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                databaseFolder.deleteFolder(folder);
-                loadData();
-            }
-        });
-        dialog.setPositiveButton("Không", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-
-        dialog.show();
+    private fun showActionDialogDeleteItem(folder: FolderModel) {
+        val dialog = AlertDialog.Builder(this)
+        dialog.setMessage("Bạn có muốn xóa folder này")
+        dialog.setNegativeButton("Có") { dialogInterface, i ->
+            databaseFolder!!.deleteFolder(folder)
+            loadData()
+        }
+        dialog.setPositiveButton("Không") { dialogInterface, i -> }
+        dialog.show()
     }
 
-
+    companion object {
+        const val REQUEST_CODE_ADD_ITEM = 123
+        const val REQUEST_CODE_EDIT_ITEM = 1234
+        const val ACTION_ADD = "add"
+        const val ACTION_EDIT = "edit"
+        const val ITEM_FOLDER = "item_folder"
+        const val LIST_FOLDER = "list_folder"
+        const val NAME_FOLDER = "name"
+        const val DESCRIPTION_FOLDER = "description"
+    }
 }

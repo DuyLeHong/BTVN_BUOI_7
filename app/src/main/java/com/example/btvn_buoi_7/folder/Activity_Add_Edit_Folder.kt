@@ -1,148 +1,128 @@
-package com.example.btvn_buoi_7.folder;
+package com.example.btvn_buoi_7.folder
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity
+import android.widget.TextView
+import android.widget.EditText
+import com.example.btvn_buoi_7.folder.FolderModel
+import android.os.Bundle
+import com.example.btvn_buoi_7.R
+import com.example.btvn_buoi_7.folder.Activity_Folder
+import android.widget.Toast
+import android.content.Intent
+import android.app.Activity
+import android.view.View
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.btvn_buoi_7.R;
-
-import java.util.List;
-
-public class Activity_Add_Edit_Folder extends AppCompatActivity {
-    TextView tv_cancel, tv_save,tv_title;
-    EditText edt_name, edt_description;
-    List<FolderModel> mlistFolder;
-    String name, description;
-    int index;
-    FolderModel folder;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_folder);
-
-        tv_title = findViewById(R.id.tv_title);
-        tv_cancel = findViewById(R.id.tv_cancel);
-        tv_save = findViewById(R.id.tv_save);
-        edt_name = findViewById(R.id.edt_name);
-        edt_description = findViewById(R.id.edt_description);
-
-        setupToolbar();
-
-        Bundle bundle = getIntent().getExtras();
-        mlistFolder = (List<FolderModel>) getIntent().getSerializableExtra(Activity_Folder.LIST_FOLDER);
-        folder = (FolderModel) bundle.getSerializable(Activity_Folder.ITEM_FOLDER);
-
-        if(getIntent().getAction() == Activity_Folder.ACTION_ADD){
-            AddActivity();
-        }if (getIntent().getAction()== Activity_Folder.ACTION_EDIT){
-            EditActivity();
+class Activity_Add_Edit_Folder : AppCompatActivity() {
+    lateinit var tv_cancel: TextView
+    var tv_save: TextView? = null
+    var tv_title: TextView? = null
+    var edt_name: EditText? = null
+    var edt_description: EditText? = null
+    var mlistFolder: List<FolderModel>? = null
+    var name: String? = null
+    var description: String? = null
+    var index = 0
+    var folder: FolderModel? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_add_folder)
+        tv_title = findViewById(R.id.tv_title)
+        tv_cancel = findViewById(R.id.tv_cancel)
+        tv_save = findViewById(R.id.tv_save)
+        edt_name = findViewById(R.id.edt_name)
+        edt_description = findViewById(R.id.edt_description)
+        setupToolbar()
+        val bundle = intent.extras
+        mlistFolder = intent.getSerializableExtra(Activity_Folder.LIST_FOLDER) as List<FolderModel>?
+        folder = bundle!!.getSerializable(Activity_Folder.ITEM_FOLDER) as FolderModel?
+        if (intent.action == Activity_Folder.ACTION_ADD) {
+            AddActivity()
         }
-
+        if (intent.action === Activity_Folder.ACTION_EDIT) {
+            EditActivity()
+        }
     }
 
-    private void AddActivity(){
-        tv_title.setText(getString(R.string.add_folder));
-        tv_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addItemFoler();
-            }
-        });
-
-        tv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+    private fun AddActivity() {
+        tv_title!!.text = getString(R.string.add_folder)
+        tv_save!!.setOnClickListener { addItemFoler() }
+        tv_cancel!!.setOnClickListener { onBackPressed() }
     }
 
-    private void EditActivity(){
-        tv_title.setText(getString(R.string.edit_folder));
-
-        edt_name.setText(folder.getName());
-        edt_description.setText(folder.getDescription());
-
-        tv_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    updateItemFoler();
-            }
-        });
-
-        tv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+    private fun EditActivity() {
+        tv_title!!.text = getString(R.string.edit_folder)
+        edt_name!!.setText(folder!!.name)
+        edt_description!!.setText(folder!!.description)
+        tv_save!!.setOnClickListener { updateItemFoler() }
+        tv_cancel!!.setOnClickListener { onBackPressed() }
     }
 
-    private void addItemFoler() {
-        name = edt_name.getText().toString().trim();
-        description = edt_description.getText().toString().trim();
-        if (checkFolderName(name)) {
-            Toast.makeText(this, getString(R.string.name_folder_exists), Toast.LENGTH_SHORT).show();
-        } else if (name.equals("")) {
-            Toast.makeText(this, getString(R.string.name_folder_not_empty), Toast.LENGTH_SHORT).show();
-        } else if (description.equals("")) {
-            Toast.makeText(this,  getString(R.string.discription_folder_exists), Toast.LENGTH_SHORT).show();
+    private fun addItemFoler() {
+        //name = edt_name!!.text.toString().trim { it <= ' ' }
+        name = edt_name!!.text.toString().trim()
+        description = edt_description!!.text.toString().trim { it <= ' ' }
+        if (checkFolderName(name!!)) {
+            Toast.makeText(this, getString(R.string.name_folder_exists), Toast.LENGTH_SHORT).show()
+        } else if (name == "") {
+            Toast.makeText(this, getString(R.string.name_folder_not_empty), Toast.LENGTH_SHORT)
+                .show()
+        } else if (description == "") {
+            Toast.makeText(this, getString(R.string.discription_folder_exists), Toast.LENGTH_SHORT)
+                .show()
         } else {
-            Intent intent = getIntent();
-            intent.putExtra(Activity_Folder.NAME_FOLDER,name);
-            intent.putExtra(Activity_Folder.DESCRIPTION_FOLDER, description);
-            setResult(RESULT_OK, intent);
-            finish();
-        }
-    }
-    private void updateItemFoler() {
-
-        String name = edt_name.getText().toString().trim();
-        String description = edt_description.getText().toString().trim();
-
-        if (name.equals("")) {
-            Toast.makeText(this, getString(R.string.name_folder_not_empty), Toast.LENGTH_SHORT).show();
-        } else if (description.equals("")) {
-            Toast.makeText(this, getString(R.string.discription_folder_exists), Toast.LENGTH_SHORT).show();
-        }  else if (name.equals(folder.getName()) && description.equals(folder.getDescription())) {
-            Toast.makeText(this, getString(R.string.name_discription_not_change), Toast.LENGTH_SHORT).show();
-        }else if(checkFolderName(name)){
-            Toast.makeText(this, getString(R.string.name_folder_exists), Toast.LENGTH_SHORT).show();
-        }else {
-            folder.setName(name);
-            folder.setDescription(description);
-            Intent intent = new Intent(this, Activity_Folder.class);
-            Bundle bundle = new Bundle();
-
-            bundle.putSerializable(Activity_Folder.ITEM_FOLDER,folder);
-            intent.putExtras(bundle);
-            setResult(RESULT_OK, intent);
-            finish();
+            val intent = intent
+            intent.putExtra(Activity_Folder.NAME_FOLDER, name)
+            intent.putExtra(Activity_Folder.DESCRIPTION_FOLDER, description)
+            setResult(RESULT_OK, intent)
+            finish()
         }
     }
 
-    private boolean checkFolderName(String name) {
-        for (FolderModel mfolder: mlistFolder) {
-            if(folder != null){
-                if(mfolder.getId() == folder.getId() ){
-                    continue;
+    private fun updateItemFoler() {
+        val name = edt_name!!.text.toString().trim()
+        val description = edt_description!!.text.toString().trim { it <= ' ' }
+        if (name == "") {
+            Toast.makeText(this, getString(R.string.name_folder_not_empty), Toast.LENGTH_SHORT)
+                .show()
+        } else if (description == "") {
+            Toast.makeText(this, getString(R.string.discription_folder_exists), Toast.LENGTH_SHORT)
+                .show()
+        } else if (name == folder!!.name && description == folder!!.description) {
+            Toast.makeText(
+                this,
+                getString(R.string.name_discription_not_change),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else if (checkFolderName(name)) {
+            Toast.makeText(this, getString(R.string.name_folder_exists), Toast.LENGTH_SHORT).show()
+        } else {
+            folder!!.name = name
+            folder!!.description = description
+            val intent = Intent(this, Activity_Folder::class.java)
+            val bundle = Bundle()
+            bundle.putSerializable(Activity_Folder.ITEM_FOLDER, folder)
+            intent.putExtras(bundle)
+            setResult(RESULT_OK, intent)
+            finish()
+        }
+    }
+
+    private fun checkFolderName(name: String): Boolean {
+        for (mfolder in mlistFolder!!) {
+            if (folder != null) {
+                if (mfolder.id == folder!!.id) {
+                    continue
                 }
             }
-            if (name.equals(mfolder.getName())) {
-                return true;
+            if (name == mfolder.name) {
+                return true
             }
         }
-        return false;
+        return false
     }
 
-    public void setupToolbar(){
-        getWindow().setStatusBarColor(getColor(R.color.white));
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+    fun setupToolbar() {
+        window.statusBarColor = getColor(R.color.white)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     }
 }

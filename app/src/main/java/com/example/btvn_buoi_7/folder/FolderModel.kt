@@ -1,43 +1,30 @@
-package com.example.btvn_buoi_7.folder;
+package com.example.btvn_buoi_7.folder
 
-import java.io.Serializable;
+import java.io.Serializable
 
-public class FolderModel implements Serializable {
-    private int id;
-    private String name;
-    private String description;
+class FolderModel : Serializable {
+    var id = 0
+    var name: String
+        get() = field
 
-    public FolderModel(int id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
-    public FolderModel(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
+        set(value) {
+            field = value
+        }
+    var description: String
+        get() = field
 
-    public String getName() {
-        return name;
-    }
+        set(value) {
+            field = value
+        }
 
-    public void setName(String name) {
-        this.name = name;
+    constructor(id: Int, name: String, description: String) {
+        this.id = id
+        this.name = name
+        this.description = description
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    constructor(name: String, description: String) {
+        this.name = name
+        this.description = description
     }
 }
